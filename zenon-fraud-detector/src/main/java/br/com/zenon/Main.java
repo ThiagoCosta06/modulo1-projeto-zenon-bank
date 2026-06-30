@@ -44,9 +44,12 @@ public class Main {
                         Boolean.valueOf((String) values.get("isFlaggerFraud")))
                 );
 
+                if(i == 1000){
+                    break;
+                }
             }
 
-            LOGGER.info("Transaction List Size: " + transactionList.toString());
+            transactionList.forEach(transaction -> System.out.println("Transaction: " + transaction.toString()));
 
         } catch(Exception e){
                 LOGGER.severe("Fatal error " + e);

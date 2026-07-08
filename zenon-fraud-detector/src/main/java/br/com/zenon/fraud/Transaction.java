@@ -1,18 +1,19 @@
 package br.com.zenon.fraud;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Transaction{
 
     private int step;
     private Type type;
-    private double amount;
+    private BigDecimal amount;
     private TransactionCustomer origin;
     private TransactionCustomer destination;
     private boolean isFraud;
     private boolean isFlaggedFraud;
 
-    public Transaction(int step, Type type, double amount, String nameOrig, double oldBalanceOrg, double newBalanceOrg, String nameDest, double oldBalanceDest, double newBalanceDest, boolean isFraud, boolean isFlaggedFraud) {
+    public Transaction(int step, Type type, BigDecimal amount, String nameOrig, double oldBalanceOrg, double newBalanceOrg, String nameDest, double oldBalanceDest, double newBalanceDest, boolean isFraud, boolean isFlaggedFraud) {
         this.isFlaggedFraud = isFlaggedFraud;
         this.isFraud = isFraud;
         this.origin = new TransactionCustomer(nameOrig, oldBalanceOrg, newBalanceOrg);
@@ -38,11 +39,11 @@ public class Transaction{
         this.step = step;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -91,12 +92,11 @@ public class Transaction{
 //                "\n isFlaggedFraud: " + isFlaggedFraud + "\n";
 //    }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return getStep() == that.getStep() && Double.compare(getAmount(), that.getAmount()) == 0 && isFraud() == that.isFraud() && isFlaggedFraud() == that.isFlaggedFraud() && getType() == that.getType() && Objects.equals(origin, that.origin) && Objects.equals(destination, that.destination);
+        return getStep() == that.getStep() && isFraud() == that.isFraud() && isFlaggedFraud() == that.isFlaggedFraud() && getType() == that.getType() && Objects.equals(getAmount(), that.getAmount()) && Objects.equals(origin, that.origin) && Objects.equals(destination, that.destination);
     }
 
     @Override

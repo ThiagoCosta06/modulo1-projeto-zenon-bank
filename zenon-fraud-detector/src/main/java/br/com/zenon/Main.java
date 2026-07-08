@@ -15,7 +15,7 @@ public class Main {
         final Logger LOGGER = Logger.getLogger(Main.class.getName());
         final TransactionIngestor transactionIngestor = new TransactionIngestor();
 
-        final String FILE_PATH = "data/paysim_with_bad_data.csv";
+        final String FILE_PATH = "data/PS_20174392719_1491204439457_log.csv";
 
         try {
             List<Transaction> transactionList = transactionIngestor.extractData(FILE_PATH);

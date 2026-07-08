@@ -4,6 +4,7 @@ import br.com.zenon.fraud.Transaction;
 import br.com.zenon.fraud.Type;
 
 import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -14,53 +15,46 @@ public class TransactionIngestor {
     private final Logger LOGGER = Logger.getLogger(TransactionIngestor.class.getName());
 
     public List<Transaction> extractData(String filePath) throws Exception {
-
-        List<Transaction> transactionList = new LinkedList<>();
-
-        try(FileInputStream fis = new FileInputStream(filePath);
-            Scanner scanner = new Scanner(fis)){
-
-            int lineCount = 0;
-
-            while(scanner.hasNextLine()){
-                    String line = scanner.nextLine();
-                    lineCount++;
-
-                    if(lineCount == 1) continue;
-
-                    String[] values = line.split(",");
-
-                    int step = Integer.parseInt((String) values[0]);
-                    Type type = Type.valueOf((String) values[1]);
-                    Double  amount = Double.valueOf((String) values[2]);
-                    String  nameOrig = values[3];
-                    Double  oldBalanceOrg = Double.valueOf((String) values[4]);
-                    Double  newBalanceOrig = Double.valueOf((String) values[5]);
-                    String  nameDest = values[6];
-                    Double  oldBalanceDest =  Double.valueOf((String) values[7]);
-                    Double  newBalanceDest = Double.valueOf((String) values[8]);
-                    Boolean isFraud = Boolean.valueOf((String) values[9]);
-                    Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
-
-                    transactionList.add(new Transaction(
-                            step,
-                            type,
-                            amount,
-                            nameOrig,
-                            oldBalanceOrg,
-                            oldBalanceDest,
-                            nameDest,
-                            oldBalanceDest,
-                            newBalanceDest,
-                            isFraud,
-                            isFlaggedFraud
-                    ));
-            }
+        try{
+            List<String> lines = Files.readAllLines(Path.of(filePath));
+            return lines.stream()
+                    .skip(1)
+                    .limit(1000)
+                    .map(this::parseLine)
+                    .toList();
         } catch (Exception e) {
-            LOGGER.severe(" TransactionIngestor Fatal error " + e);
+            throw new RuntimeException("Fatal error " + e);
         }
+    }
 
-        return transactionList;
+    public Transaction parseLine(String line){
+        String[] values = line.split(",");
+
+        int step = Integer.parseInt((String) values[0]);
+        Type type = Type.valueOf((String) values[1]);
+        BigDecimal  amount = new BigDecimal(values[2]);
+        String  nameOrig = values[3];
+        Double  oldBalanceOrg = Double.valueOf((String) values[4]);
+        Double  newBalanceOrig = Double.valueOf((String) values[5]);
+        String  nameDest = values[6];
+        Double  oldBalanceDest =  Double.valueOf((String) values[7]);
+        Double  newBalanceDest = Double.valueOf((String) values[8]);
+        Boolean isFraud = Boolean.valueOf((String) values[9]);
+        Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
+
+        return new Transaction(
+                step,
+                type,
+                amount,
+                nameOrig,
+                oldBalanceOrg,
+                oldBalanceDest,
+                nameDest,
+                oldBalanceDest,
+                newBalanceDest,
+                isFraud,
+                isFlaggedFraud
+        );
     }
 
 }

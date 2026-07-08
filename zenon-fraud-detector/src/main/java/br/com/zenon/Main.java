@@ -15,11 +15,10 @@ public class Main {
         final Logger LOGGER = Logger.getLogger(Main.class.getName());
         final TransactionIngestor transactionIngestor = new TransactionIngestor();
 
-        String FILE_PATH = "C:/Users/User/Downloads/Studying/AnhangueraPostGraduation/Codigos/Modulo1/modulo1-projeto-zenon-bank/data/PS_20174392719_1491204439457_log.csv";
-        Path filePath = Path.of(FILE_PATH);
+        final String FILE_PATH = "data/paysim_with_bad_data.csv";
 
         try {
-            List<Transaction> transactionList = transactionIngestor.extractData(filePath);
+            List<Transaction> transactionList = transactionIngestor.extractData(FILE_PATH);
 
             transactionList.forEach(transaction -> System.out.println(transaction.toString()));
         } catch(Exception e){

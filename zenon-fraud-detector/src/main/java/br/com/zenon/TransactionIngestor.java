@@ -3,6 +3,7 @@ package br.com.zenon;
 import br.com.zenon.fraud.Transaction;
 import br.com.zenon.fraud.Type;
 
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -12,44 +13,51 @@ public class TransactionIngestor {
 
     private final Logger LOGGER = Logger.getLogger(TransactionIngestor.class.getName());
 
-    public List<Transaction> extractData(Path filePath) throws Exception {
+    public List<Transaction> extractData(String filePath) throws Exception {
 
         List<Transaction> transactionList = new LinkedList<>();
 
-        try {
-            String fileContent = Files.readString(filePath);
-            String[] lines = fileContent.split("\n");
-            String[] keys = lines[0].split(",");
+        try(FileInputStream fis = new FileInputStream(filePath);
+            Scanner scanner = new Scanner(fis)){
 
+            int lineCount = 0;
 
-            for (int i = 1; i <= Arrays.stream(lines).toList().size(); i++) {
-                Map values = new LinkedHashMap<String, String>();
-                String[] lineValues = lines[i].split(",");
-                for (int j = 0; j < Arrays.stream(keys).toList().size(); j++) {
-                    values.put(keys[j], lineValues[j]);
-                }
-                transactionList.add(new Transaction(
-                        Integer.valueOf((String) values.get("step")),
-                        Type.valueOf((String) values.get("type")),
-                        Double.valueOf((String) values.get("amount")),
-                        (String) values.get("nameOrig"),
-                        Double.valueOf((String) values.get("oldbalanceOrg")),
-                        Double.valueOf((String) values.get("newbalanceOrig")),
-                        (String) values.get("nameDest"),
-                        Double.valueOf((String) values.get("oldbalanceDest")),
-                        Double.valueOf(values.get("newbalanceDest").toString()),
-                        Boolean.valueOf((String) values.get("isFraud")),
-                        Boolean.valueOf((String) values.get("isFlaggerFraud")))
-                );
+            while(scanner.hasNextLine()){
+                    String line = scanner.nextLine();
+                    lineCount++;
 
-                if (i == 1000) {
-                    break;
-                }
+                    if(lineCount == 1) continue;
+
+                    String[] values = line.split(",");
+
+                    int step = Integer.parseInt((String) values[0]);
+                    Type type = Type.valueOf((String) values[1]);
+                    Double  amount = Double.valueOf((String) values[2]);
+                    String  nameOrig = values[3];
+                    Double  oldBalanceOrg = Double.valueOf((String) values[4]);
+                    Double  newBalanceOrig = Double.valueOf((String) values[5]);
+                    String  nameDest = values[6];
+                    Double  oldBalanceDest =  Double.valueOf((String) values[7]);
+                    Double  newBalanceDest = Double.valueOf((String) values[8]);
+                    Boolean isFraud = Boolean.valueOf((String) values[9]);
+                    Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
+
+                    transactionList.add(new Transaction(
+                            step,
+                            type,
+                            amount,
+                            nameOrig,
+                            oldBalanceOrg,
+                            oldBalanceDest,
+                            nameDest,
+                            oldBalanceDest,
+                            newBalanceDest,
+                            isFraud,
+                            isFlaggedFraud
+                    ));
             }
-
-
         } catch (Exception e) {
-            LOGGER.severe("Fatal error " + e);
+            LOGGER.severe(" TransactionIngestor Fatal error " + e);
         }
 
         return transactionList;

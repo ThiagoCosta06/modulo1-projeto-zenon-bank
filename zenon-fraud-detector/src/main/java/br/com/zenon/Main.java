@@ -15,11 +15,12 @@ public class Main {
         final Logger LOGGER = Logger.getLogger(Main.class.getName());
         final TransactionIngestor transactionIngestor = new TransactionIngestor();
 
-        final String FILE_PATH = "data/PS_20174392719_1491204439457_log.csv";
+        final String FILE_PATH = "data/paysim_with_bad_data.csv";
 
         try {
             List<Transaction> transactionList = transactionIngestor.extractData(FILE_PATH);
 
+            System.out.println(transactionList.size());
             transactionList.forEach(transaction -> System.out.println(transaction.toString()));
         } catch(Exception e){
                 LOGGER.severe("Fatal error " + e);

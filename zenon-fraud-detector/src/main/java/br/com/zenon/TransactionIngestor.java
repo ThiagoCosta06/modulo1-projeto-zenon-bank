@@ -15,46 +15,52 @@ public class TransactionIngestor {
     private final Logger LOGGER = Logger.getLogger(TransactionIngestor.class.getName());
 
     public List<Transaction> extractData(String filePath) throws Exception {
-        try{
+        try {
             List<String> lines = Files.readAllLines(Path.of(filePath));
             return lines.stream()
                     .skip(1)
                     .limit(1000)
                     .map(this::parseLine)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .toList();
         } catch (Exception e) {
             throw new RuntimeException("Fatal error " + e);
         }
     }
 
-    public Transaction parseLine(String line){
-        String[] values = line.split(",");
+    public Optional<Transaction> parseLine(String line) {
+        try {
+            String[] values = line.split(",");
 
-        int step = Integer.parseInt((String) values[0]);
-        Type type = Type.valueOf((String) values[1]);
-        BigDecimal  amount = new BigDecimal(values[2]);
-        String  nameOrig = values[3];
-        Double  oldBalanceOrg = Double.valueOf((String) values[4]);
-        Double  newBalanceOrig = Double.valueOf((String) values[5]);
-        String  nameDest = values[6];
-        Double  oldBalanceDest =  Double.valueOf((String) values[7]);
-        Double  newBalanceDest = Double.valueOf((String) values[8]);
-        Boolean isFraud = Boolean.valueOf((String) values[9]);
-        Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
+            int step = Integer.parseInt((String) values[0]);
+            Type type = Type.valueOf((String) values[1]);
+            BigDecimal amount = new BigDecimal(values[2]);
+            String nameOrig = values[3];
+            Double oldBalanceOrg = Double.valueOf((String) values[4]);
+            Double newBalanceOrig = Double.valueOf((String) values[5]);
+            String nameDest = values[6];
+            Double oldBalanceDest = Double.valueOf((String) values[7]);
+            Double newBalanceDest = Double.valueOf((String) values[8]);
+            Boolean isFraud = Boolean.valueOf((String) values[9]);
+            Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
 
-        return new Transaction(
-                step,
-                type,
-                amount,
-                nameOrig,
-                oldBalanceOrg,
-                oldBalanceDest,
-                nameDest,
-                oldBalanceDest,
-                newBalanceDest,
-                isFraud,
-                isFlaggedFraud
-        );
+            return Optional.of(new Transaction(
+                    step,
+                    type,
+                    amount,
+                    nameOrig,
+                    oldBalanceOrg,
+                    oldBalanceDest,
+                    nameDest,
+                    oldBalanceDest,
+                    newBalanceDest,
+                    isFraud,
+                    isFlaggedFraud
+            ));
+        } catch (Exception e) {
+            LOGGER.severe("Error parsing the line: " + line + "Exception: " + e);
+            return Optional.empty();
+        }
     }
-
 }

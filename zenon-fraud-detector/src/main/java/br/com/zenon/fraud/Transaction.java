@@ -1,5 +1,7 @@
 package br.com.zenon.fraud;
 
+import com.google.common.base.Preconditions;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -13,13 +15,34 @@ public class Transaction{
     private boolean isFraud;
     private boolean isFlaggedFraud;
 
-    public Transaction(int step, Type type, BigDecimal amount, String nameOrig, double oldBalanceOrg, double newBalanceOrg, String nameDest, double oldBalanceDest, double newBalanceDest, boolean isFraud, boolean isFlaggedFraud) {
+    public Transaction(int step, String type, BigDecimal amount, String nameOrig, double oldBalanceOrg, double newBalanceOrg, String nameDest, double oldBalanceDest, double newBalanceDest, boolean isFraud, boolean isFlaggedFraud) {
+        if(step <= 0) throw new IllegalArgumentException("Argument step must be bigger than 0");
+        if(amount.signum() != 1) throw new IllegalArgumentException("Argument amount must be bigger than 0");
+        if(oldBalanceOrg < 0) throw new IllegalArgumentException("Argument oldBalanceOrg must be bigger than 0");
+        if(newBalanceOrg < 0) throw new IllegalArgumentException("Argument newBalanceOrg must be bigger than 0");
+        if(oldBalanceDest < 0) throw new IllegalArgumentException("Argument oldBalanceDest must be bigger than 0");
+        if(newBalanceDest < 0) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
+        if(newBalanceDest < 0) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
+        if(Type.valueOf(type).) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
+        if(nameDest.isEmpty()) throw new IllegalArgumentException("Argument name cannot be null");
+        Objects.nonNull(step);
+        Objects.nonNull(type);
+        Objects.nonNull(amount);
+        Objects.nonNull(nameOrig);
+        Objects.nonNull(oldBalanceOrg);
+        Objects.nonNull(newBalanceOrg);
+        Objects.nonNull(nameDest);
+        Objects.nonNull(oldBalanceDest);
+        Objects.nonNull(newBalanceDest);
+        Objects.nonNull(isFraud);
+        Objects.nonNull(isFlaggedFraud);
+
         this.isFlaggedFraud = isFlaggedFraud;
         this.isFraud = isFraud;
         this.origin = new TransactionCustomer(nameOrig, oldBalanceOrg, newBalanceOrg);
         this.destination = new TransactionCustomer(nameDest, oldBalanceDest, newBalanceDest);
         this.amount = amount;
-        this.type = type;
+        this.type = Type.valueOf(type);
         this.step = step;
     }
 

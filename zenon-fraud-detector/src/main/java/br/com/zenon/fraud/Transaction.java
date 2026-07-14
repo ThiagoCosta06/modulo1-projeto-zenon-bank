@@ -23,7 +23,6 @@ public class Transaction{
         if(oldBalanceDest < 0) throw new IllegalArgumentException("Argument oldBalanceDest must be bigger than 0");
         if(newBalanceDest < 0) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
         if(newBalanceDest < 0) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
-        if(Type.valueOf(type).) throw new IllegalArgumentException("Argument newBalanceDest must be bigger than 0");
         if(nameDest.isEmpty()) throw new IllegalArgumentException("Argument name cannot be null");
         Objects.nonNull(step);
         Objects.nonNull(type);
@@ -34,8 +33,6 @@ public class Transaction{
         Objects.nonNull(nameDest);
         Objects.nonNull(oldBalanceDest);
         Objects.nonNull(newBalanceDest);
-        Objects.nonNull(isFraud);
-        Objects.nonNull(isFlaggedFraud);
 
         this.isFlaggedFraud = isFlaggedFraud;
         this.isFraud = isFraud;
@@ -84,6 +81,14 @@ public class Transaction{
 
     public void setFlaggedFraud(boolean flaggedFraud) {
         isFlaggedFraud = flaggedFraud;
+    }
+
+    public TransactionCustomer getOrigin() {
+        return origin;
+    }
+
+    public TransactionCustomer getDestination() {
+        return destination;
     }
 
     @Override

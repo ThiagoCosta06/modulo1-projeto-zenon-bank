@@ -19,7 +19,7 @@ public class TransactionIngestor {
             List<String> lines = Files.readAllLines(Path.of(filePath));
             return lines.stream()
                     .skip(1)
-                    .limit(1000)
+                    .limit(50000)
                     .map(this::parseLine)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -34,7 +34,7 @@ public class TransactionIngestor {
             String[] values = line.split(",");
 
             int step = Integer.parseInt((String) values[0]);
-            Type type = Type.valueOf((String) values[1]);
+            String type = values[1];
             BigDecimal amount = new BigDecimal(values[2]);
             String nameOrig = values[3];
             Double oldBalanceOrg = Double.valueOf((String) values[4]);
@@ -42,8 +42,8 @@ public class TransactionIngestor {
             String nameDest = values[6];
             Double oldBalanceDest = Double.valueOf((String) values[7]);
             Double newBalanceDest = Double.valueOf((String) values[8]);
-            Boolean isFraud = Boolean.valueOf((String) values[9]);
-            Boolean isFlaggedFraud = Boolean.valueOf((String) values[10]);
+            Boolean isFraud = "1".equals(values[9]);
+            Boolean isFlaggedFraud = "1".equals(values[10]);
 
             return Optional.of(new Transaction(
                     step,

@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class TransactionIngestor {
+public class TransactionIngestor{
 
     private final Logger LOGGER = Logger.getLogger(TransactionIngestor.class.getName());
 
@@ -19,7 +19,7 @@ public class TransactionIngestor {
             List<String> lines = Files.readAllLines(Path.of(filePath));
             return lines.stream()
                     .skip(1)
-                    .limit(50000)
+                    .limit(100000)
                     .map(this::parseLine)
                     .filter(Optional::isPresent)
                     .map(Optional::get)

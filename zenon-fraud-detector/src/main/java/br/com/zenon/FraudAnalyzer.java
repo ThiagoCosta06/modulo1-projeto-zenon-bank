@@ -4,13 +4,13 @@ import br.com.zenon.fraud.Transaction;
 import br.com.zenon.fraud.Type;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class FraudAnalyzer {
+public class FraudAnalyzer implements TransactionListRepository {
+
+    Logger LOGGER = Logger.getLogger(FraudAnalyzer.class.getName());
 
     public void fraudSize(List<Transaction> transactionList){
         Long fraudSize = transactionList.stream()
@@ -59,5 +59,25 @@ public class FraudAnalyzer {
                 .collect(Collectors.groupingBy(Transaction::getType, Collectors.counting()));
 
         System.out.println("Types of frauds: " + totalTypes);
+    }
+
+    @Override
+    public Optional<Transaction> findByName(List<Transaction> transactionList, String name){
+
+        Long timeInit = System.nanoTime();
+        try{
+            Transaction customer = transactionList.stream()
+                    .filter(transaction -> transaction.getOrigin().getName().equals(name))
+                    .findFirst()
+                    .orElseThrow();
+
+            return Optional.of(customer);
+        }catch(Exception e){
+            LOGGER.severe("Transaction not found for client: " + name);
+            return Optional.empty();
+        }finally{
+            Long timeEnd = System.nanoTime();
+            System.out.println("Processing time: " + (timeEnd - timeInit) / 1_000_000.0);
+        }
     }
 }
